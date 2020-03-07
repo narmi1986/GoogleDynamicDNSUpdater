@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Configuration;
 using System.Net.Http;
@@ -33,7 +27,7 @@ namespace GoogleDynamicDNS
             WriteToLog("Service Started");
             if (int.TryParse(ConfigurationManager.AppSettings["LogFileDaysToKeep"], out int logFileDaysToKeep))
             {
-                RemoveOldLogFiles();
+                RemoveOldLogFiles(logFileDaysToKeep);
             }
             else
             {
@@ -122,13 +116,13 @@ namespace GoogleDynamicDNS
             }
         }
 
-        private static void RemoveOldLogFiles()
+        private static void RemoveOldLogFiles(int numberOfDaysToKeep)
         {
             DirectoryInfo d = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
             FileInfo[] files = d.GetFiles("Log_*.txt");
             foreach (var file in files)
             {
-                if (file.LastWriteTime > DateTime.Now.AddDays(-30))
+                if (file.LastWriteTime > DateTime.Now.AddDays(-numberOfDaysToKeep))
                 {
                     //No action required
                 }
@@ -195,41 +189,39 @@ namespace GoogleDynamicDNS
             WriteToLog(content); //The response will look like this [good 192.168.0.1]
             string result = content.Split(' ')[0];
 
-            if (result == "good")
+            switch (result)
             {
-                WriteToLog($"The update was successful [{ip}]");
-            }
-            else if (result == "nochg")
-            {
-                WriteToLog($"The supplied IP address [{ip}] is already set for this host. You should not attempt another update until your IP address changes");
-            }
-            else if (result == "nohost")
-            {
-                WriteToLog($"The hostname {hostname} does not exist, or does not have Dynamic DNS enabled");
-            }
-            else if (result == "badauth")
-            {
-                WriteToLog($"The username [{username}] / password [{password}] combination is not valid for the specified host [{hostname}]");
-            }
-            else if (result == "notfqdn")
-            {
-                WriteToLog($"The supplied hostname [{hostname}] is not a valid fully-qualified domain name");
-            }
-            else if (result == "badagent")
-            {
-                WriteToLog("Your Dynamic DNS client is making bad requests. Ensure the user agent is set in the request");
-            }
-            else if (result == "abuse")
-            {
-                WriteToLog($"Dynamic DNS access for the hostname [{hostname}] has been blocked due to failure to interpret previous responses correctly");
-            }
-            else if (result == "911")
-            {
-                WriteToLog($"An error happened at Googles end. Wait 5 minutes and retry");
-            }
-            else 
-            {
-                WriteToLog("A custom A or AAAA resource record conflicts with the update. Delete the indicated resource record within DNS settings page and try the update again");
+                case "good":
+                    WriteToLog($"The update was successful [{ip}]");
+                    break;
+                case "nochg":
+                    WriteToLog($"The supplied IP address [{ip}] is already set for this host. You should not attempt another update until your IP address changes");
+                    break;
+                case "nohost":
+                    WriteToLog($"The hostname {hostname} does not exist, or does not have Dynamic DNS enabled");
+                    break;
+                case "badauth":
+                    WriteToLog($"The username [{username}] / password [{password}] combination is not valid for the specified host [{hostname}]");
+                    break;
+                case "notfqdn":
+                    WriteToLog($"The supplied hostname [{hostname}] is not a valid fully-qualified domain name");
+                    break;
+                case "badagent":
+                    WriteToLog("Your Dynamic DNS client is making bad requests. Ensure the user agent is set in the request");
+                    break;
+                case "abuse":
+                    WriteToLog($"Dynamic DNS access for the hostname [{hostname}] has been blocked due to failure to interpret previous responses correctly");
+                    break;
+                case "911":
+                    WriteToLog($"An error happened at Googles end. Wait 5 minutes and retry");
+                    break;
+                case "conflict A":
+                case "conflict AAAA":
+                    WriteToLog("A custom A or AAAA resource record conflicts with the update. Delete the indicated resource record within DNS settings page and try the update again");
+                    break;
+                default:
+                    WriteToLog($"Unknown response [conflict AAAA]. See Google Domains Dynamic DNS API documentation.");
+                    break;
             }
         }
     }
