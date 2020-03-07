@@ -8,9 +8,10 @@ Please read and follow these steps to setup and install the service on your Wind
 3) From the solution explorer open the App.config file.
 4) Update the 'Google Domains Credentials' values.
 5) Set the solution configuration to "Release" and build the solution (note you can also build in Debug if you prefer).
-6) Open Command Prompt as an Administrator and go to the executables directory: ...\GoogleDynamicDNSUpdater-master\GoogleDynamicDNS\bin\Release
+6) Open Command Prompt as an Administrator and go to the executables directory: 
+</br> ...\GoogleDynamicDNSUpdater-master\GoogleDynamicDNS\bin\Release
 7) Type the following to install the service (note the location of IntallUtil.exe may change in the future):
-  C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe "GoogleDynamicDNS.exe"
+</br> C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe "GoogleDynamicDNS.exe"
 8) In the Set Service Login window enter the Windows User credentials for the service.
 9) Open Services and navigate to the service "GoogleDynamicDNSUpdater". 
 10) Right click it and select "Start".
@@ -18,9 +19,10 @@ Please read and follow these steps to setup and install the service on your Wind
 
 Other things worth noting:
 1) To Uninstall:
-  a) Open Command Prompt as an Administrator and go to the executables directory: ...\GoogleDynamicDNSUpdater-master\GoogleDynamicDNS\bin\Release
-  b) Type the following to remove the service (note the location of IntallUtil.exe may change in the future):
-    C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe /u "GoogleDynamicDNS.exe"
+  </br> a) Open Command Prompt as an Administrator and go to the executables directory: 
+  </br>   ...\GoogleDynamicDNSUpdater-master\GoogleDynamicDNS\bin\Release
+  </br> b) Type the following to remove the service (note the location of IntallUtil.exe may change in the future):
+  </br>   C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe /u "GoogleDynamicDNS.exe"
 
 2) The service is automatically set to start with windows. This can be changed in the Services (Properties -> Start Up Type -> Manual)
 
